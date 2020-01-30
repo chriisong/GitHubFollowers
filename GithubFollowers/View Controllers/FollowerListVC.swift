@@ -13,7 +13,6 @@ protocol FollowerListDelegate: class {
 }
 
 class FollowerListVC: UIViewController {
-
     enum Section { case main }
     
     typealias SectionType = Section
@@ -37,6 +36,7 @@ class FollowerListVC: UIViewController {
         getFollowers(username: username, page: page)
         configureDataSource()
         configureSearchController()
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -70,6 +70,9 @@ class FollowerListVC: UIViewController {
     private func configureViewController() {
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
+        
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        navigationItem.rightBarButtonItem = addButton
     }
     
     private func getFollowers(username: String, page: Int) {
@@ -91,7 +94,6 @@ class FollowerListVC: UIViewController {
                     return
                 }
                 self.setupSnapshot(filter: self.followers)
-                print(self.followers)
             }
         }
     }
@@ -103,6 +105,32 @@ class FollowerListVC: UIViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController = searchController
         searchController.searchBar.delegate = self
+    }
+    
+    @objc func addButtonTapped() {
+        showLoadingView()
+        
+        NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
+            guard let self = self else { return }
+            self.dismissLoadingView()
+            switch result {
+            case .success(let user):
+                let favourite = Follower(login: user.login, avatarUrl: user.avatarUrl)
+                DispatchQueue.main.async {
+                    CoreDataManager().updateWith(favourite: favourite, actionType: .add) { [weak self] error in
+                        guard let self = self else { return }
+                        guard let error = error else {
+                            self.presentGFAlertOnMainThread(title: "Success!", message: "Successfully favourited this user.", buttonTitle: "Sweet.")
+                            return
+                        }
+                        self.presentGFAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTitle: "Boo.")
+                    }
+                }
+                
+            case .failure(let error):
+                self.presentGFAlertOnMainThread(title: "Something went wrong.", message: error.rawValue, buttonTitle: "OK")
+            }
+        }
     }
 }
 
