@@ -16,4 +16,4 @@ This project is to showcase some of my core Swift skills.
 * Core Data and CloudKit
     * This app handles persistence using Core Data and CloudKit using the latest NSPersistenceCloudKitContainer, which allows multiple-devices to stay in sync under the same iCloud account.
 
-![](gif_test.gif)
+![Alt Text](https://media.giphy.com/media/fYHGDmFEd0QsorkqRk/giphy.gif)
