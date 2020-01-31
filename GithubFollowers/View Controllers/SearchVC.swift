@@ -11,17 +11,19 @@ import UIKit
 class SearchVC: UIViewController {
     let logoImageView = UIImageView()
     let usernameTextField = GFTextField()
-    let callToActionButton = GFButton(backgroundColor: .systemGreen, title: "Get Followers")
+    let getFollowersButton = GFButton(backgroundColor: .systemGreen, title: "Get Followers")
+    let getUserInfoButton = GFButton(backgroundColor: .systemBlue, title: "Get User Info")
     
     private var isUsernameEntered: Bool { return !usernameTextField.text!.isEmpty}
     
+    private let inset: CGFloat = 50
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         configureLogoImageView()
         configureTextField()
-        configureCallToActionButton()
+        configureButtons()
         createDismissKeyboardTapGesture()
     }
     
@@ -48,22 +50,29 @@ class SearchVC: UIViewController {
         usernameTextField.delegate = self
         
         NSLayoutConstraint.activate([
-            usernameTextField.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 48),
-            usernameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
-            usernameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+            usernameTextField.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: inset),
+            usernameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: inset),
+            usernameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -inset),
             usernameTextField.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
-    private func configureCallToActionButton() {
-        view.addSubview(callToActionButton)
-        callToActionButton.addTarget(self, action: #selector(pushFollowerListVC), for: .touchUpInside )
+    private func configureButtons() {
+        view.addSubview(getFollowersButton)
+        view.addSubview(getUserInfoButton)
+        getFollowersButton.addTarget(self, action: #selector(pushFollowerListVC), for: .touchUpInside)
+        getUserInfoButton.addTarget(self, action: #selector(pushUserInfoVC), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            callToActionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
-            callToActionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
-            callToActionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-            callToActionButton.heightAnchor.constraint(equalToConstant: 50)
+            getUserInfoButton.bottomAnchor.constraint(equalTo: getFollowersButton.topAnchor, constant: -20),
+            getUserInfoButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: inset),
+            getUserInfoButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -inset),
+            getUserInfoButton.heightAnchor.constraint(equalToConstant: inset),
+            
+            getFollowersButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -inset),
+            getFollowersButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: inset),
+            getFollowersButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -inset),
+            getFollowersButton.heightAnchor.constraint(equalToConstant: inset)
         ])
     }
     
@@ -72,9 +81,22 @@ class SearchVC: UIViewController {
         view.addGestureRecognizer(tap)
     }
     
+    @objc func pushUserInfoVC() {
+        guard isUsernameEntered else {
+            presentGFAlertOnMainThread(title: GFError.noUserNameEntered.rawValue, message: "Please try again with a username", buttonTitle: "OK")
+            return
+        }
+        let userInfoVC = UserInfoVC()
+        guard let username = usernameTextField.text else { return }
+        let user = Follower(login: username, avatarUrl: "")
+        userInfoVC.follower = user
+        userInfoVC.isFromHome = true
+        navigationController?.pushViewController(userInfoVC, animated: true)
+    }
+    
     @objc func pushFollowerListVC() {
         guard isUsernameEntered else {
-            presentGFAlertOnMainThread(title: "No username is entered", message: "please try again with username", buttonTitle: "OK")
+            presentGFAlertOnMainThread(title: GFError.noUserNameEntered.rawValue, message: "Please try again with a username", buttonTitle: "OK")
             return
         }
         let followerListVC = FollowerListVC()
@@ -85,7 +107,6 @@ class SearchVC: UIViewController {
             case .success(let user):
                 DispatchQueue.main.async {
                     if CoreDataManager.shared.checkForRedudantUser(username: user.login) == false {
-//                        CoreDataManager.shared.saveToUser(user: user)
                         CoreDataManager.shared.saveToUser(user: user)
                     } else {
                         return
@@ -99,13 +120,12 @@ class SearchVC: UIViewController {
         followerListVC.title = username
         navigationController?.pushViewController(followerListVC, animated: true)
     }
-    
-
 }
 
 extension SearchVC: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         pushFollowerListVC()
+        textField.resignFirstResponder()
         return true
     }
 }

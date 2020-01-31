@@ -240,6 +240,7 @@ extension FavouritesListVC: NSFetchedResultsControllerDelegate {
                 CoreDataManager.shared.viewContext.delete(objectData)
             }
             try CoreDataManager.shared.viewContext.save()
+            isSearching = false
             setupSnapshot()
         } catch {
             self.presentGFAlertOnMainThread(title: "Something went wrong", message: "And error occured while deleting. Error: \(error.localizedDescription)", buttonTitle: "Oh no")

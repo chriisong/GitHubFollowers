@@ -28,6 +28,7 @@ class UserInfoVC: UIViewController {
     var favourite: CDFollower!
     
     var isFavourite = false
+    var isFromHome = false
     var isAlreadySaved = false
     
     var _user: CDUser!
@@ -38,15 +39,19 @@ class UserInfoVC: UIViewController {
         configureNavigationBar()
         getUserInfo()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
     
     private func configureNavigationBar() {
         view.backgroundColor = .systemBackground
         navigationItem.largeTitleDisplayMode = .never
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
-        
-        navigationItem.rightBarButtonItems = [doneButton]
+        let addButton = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(addButtonTapped))
+        navigationItem.leftBarButtonItems = isFromHome ? [] : [doneButton]
+        navigationItem.rightBarButtonItem = addButton
     }
-    
     
     private func getUserInfo() {
         NetworkManager.shared.getUserInfo(for: isFavourite ? favourite.login : follower.login) { [weak self] result in
@@ -122,6 +127,32 @@ class UserInfoVC: UIViewController {
     @objc func dismissVC() {
         dismiss(animated: true)
     }
+    
+    @objc func addButtonTapped() {
+        showLoadingView()
+        
+        NetworkManager.shared.getUserInfo(for: isFavourite ? favourite.login : follower.login) { [weak self] result in
+            guard let self = self else { return }
+            self.dismissLoadingView()
+            switch result {
+            case .success(let user):
+                let favourite = Follower(login: user.login, avatarUrl: user.avatarUrl)
+                
+                DispatchQueue.main.async {
+                    CoreDataManager().updateWith(favourite: favourite, actionType: .add) { [weak self] error in
+                        guard let self = self else { return }
+                        guard let error = error else {
+                            self.presentGFAlertOnMainThread(title: "Success!", message: "Successfully favourited this user.", buttonTitle: "Sweet.")
+                            return
+                        }
+                        self.presentGFAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTitle: "Boo.")
+                    }
+                }
+            case .failure(let error):
+                self.presentGFAlertOnMainThread(title: "Something went wrong.", message: error.rawValue, buttonTitle: "OK")
+            }
+        }
+    }
 }
 extension UserInfoVC: UserInfoDelegate {
     func didTapGitHubProfile(for user: CDUser) {
@@ -138,7 +169,7 @@ extension UserInfoVC: UserInfoDelegate {
             return
         }
         
-        if isFavourite {
+        if isFavourite || isFromHome {
             let vc = FollowerListVC()
             vc._user = self._user
             vc.title = self._user.login

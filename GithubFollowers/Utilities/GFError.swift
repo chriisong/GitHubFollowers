@@ -16,4 +16,7 @@ enum GFError: String, Error {
     
     case unableToFavourite = "There was an error favourting this user. Please try again."
     case alreadyInFavourites = "You have already favourited this user. You must REALLY like them, but you cannot add this user again. Sorry!"
+    
+    // MARK: SearchVC errors
+    case noUserNameEntered = "No username is entered."
 }

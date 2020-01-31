@@ -73,8 +73,8 @@ class FollowerListVC: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
-        
+
+        let addButton = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(addButtonTapped))
         navigationItem.rightBarButtonItems = [addButton]
     }
     
@@ -136,7 +136,6 @@ class FollowerListVC: UIViewController {
                         self.presentGFAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTitle: "Boo.")
                     }
                 }
-                
             case .failure(let error):
                 self.presentGFAlertOnMainThread(title: "Something went wrong.", message: error.rawValue, buttonTitle: "OK")
             }
