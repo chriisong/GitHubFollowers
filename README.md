@@ -15,5 +15,9 @@ This project is to showcase some of my core Swift skills.
     * UICollectionViewDiffableDataSource and UITableViewDiffableDataSource in conjunction with NSDiffableDataSourceSnapshot has provided an easier and cleaner way of programmatically handling tableView and collectionView, with an additional diffing animation bonus that the traditional APIs cannot provide.
 * Core Data and CloudKit
     * This app handles persistence using Core Data and CloudKit using the latest NSPersistenceCloudKitContainer, which allows multiple-devices to stay in sync under the same iCloud account.
+    
+
+Screen Recordings:
+
 
 ![Alt Text](https://media.giphy.com/media/fYHGDmFEd0QsorkqRk/giphy.gif)
