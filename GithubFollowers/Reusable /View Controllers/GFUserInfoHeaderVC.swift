@@ -18,11 +18,14 @@ class GFUserInfoHeaderVC: UIViewController {
     let bioLabel = GFBodyLabel(textAlignment: .left)
     
     var user: User!
+    var _user: CDUser!
     
-    init(user: User) {
+    init(coreData _user: CDUser, userDefaults user: User) {
         super.init(nibName: nil, bundle: nil)
+        self._user = _user
         self.user = user
     }
+    
     required init?(coder: NSCoder) { fatalError("") }
     
     

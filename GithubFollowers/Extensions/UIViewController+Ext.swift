@@ -22,6 +22,19 @@ extension UIViewController {
         }
     }
     
+    func presentGFAlertActionVC(title: String, message: String, buttonTitle: String, buttonAction: @escaping () -> Void) {
+        DispatchQueue.main.async {
+            let alertVC = GFAlertVC(title: title, message: message, buttonTitle: buttonTitle, buttonAction: buttonAction)
+            alertVC.modalPresentationStyle = .overFullScreen
+            alertVC.modalTransitionStyle = .crossDissolve
+            alertVC.customAction {
+                buttonAction()
+                self.dismiss(animated: true)
+            }
+            self.present(alertVC, animated: true)
+        }
+    }
+    
     func showLoadingView() {
         containerView = UIView(frame: view.bounds)
         view.addSubview(containerView)
@@ -49,10 +62,17 @@ extension UIViewController {
         }
     }
     
-    func showEmptyStateView(with message: String, in view: UIView) {
+    func showEmptyStateView(with message: String, in view: UIView, tag: Int) {
         let emptyStateView = GFEmptyStateView(message: message)
         emptyStateView.frame = view.bounds
+        emptyStateView.tag = tag
         view.addSubview(emptyStateView)
+    }
+    
+    func removeEmptyStateView(in view: UIView, tag: Int) {
+        if let viewWithTage = view.viewWithTag(tag) {
+            viewWithTage.removeFromSuperview()
+        }
     }
     
     func presentSafariVC(with url: URL) {

@@ -14,7 +14,9 @@ class CoreDataManager {
     let viewContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     private var follower: CDFollower!
+    private var _user: CDUser!
     private var followerFetchRequestController: NSFetchedResultsController<CDFollower>!
+    var userFetchRequestController: NSFetchedResultsController<CDUser>!
     
     func saveToFavourites(favourite: Follower) -> GFError? {
         if follower == nil {
@@ -29,6 +31,65 @@ class CoreDataManager {
         } catch {
             print(error.localizedDescription)
             return .unableToFavourite
+        }
+    }
+    
+    func retrieveUserData(username: String) -> CDUser {
+        test(predicate: username)
+        guard let fetchedUsername = userFetchRequestController.fetchedObjects?.last else { fatalError("") }
+        return fetchedUsername
+    }
+    
+    func saveToUserAndRetreive(user: User, completed: @escaping((CDUser) -> Void)) {
+        if _user == nil {
+            _user = (NSEntityDescription.insertNewObject(forEntityName: CDUser.entityName, into: CoreDataManager.shared.viewContext) as! CDUser)
+        }
+        
+        _user.login = user.login
+        _user.avatarUrl = user.avatarUrl
+        _user.name = user.name
+        _user.location = user.location
+        _user.bio = user.bio
+        _user.publicRepos = Int64(user.publicRepos)
+        _user.publicGists = Int64(user.publicGists)
+        _user.htmlUrl = user.htmlUrl
+        _user.following = Int64(user.following)
+        _user.followers = Int64(user.followers)
+        _user.createdAt = user.createdAt
+        
+        if CoreDataManager.shared.viewContext.hasChanges {
+            do {
+                try CoreDataManager.shared.viewContext.save()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        completed(_user)
+    }
+    
+    func saveToUser(user: User) {
+        if _user == nil {
+            _user = (NSEntityDescription.insertNewObject(forEntityName: CDUser.entityName, into: CoreDataManager.shared.viewContext) as! CDUser)
+        }
+
+        _user.login = user.login
+        _user.avatarUrl = user.avatarUrl
+        _user.name = user.name
+        _user.location = user.location
+        _user.bio = user.bio
+        _user.publicRepos = Int64(user.publicRepos)
+        _user.publicGists = Int64(user.publicGists)
+        _user.htmlUrl = user.htmlUrl
+        _user.following = Int64(user.following)
+        _user.followers = Int64(user.followers)
+        _user.createdAt = user.createdAt
+
+        if CoreDataManager.shared.viewContext.hasChanges {
+            do {
+                try CoreDataManager.shared.viewContext.save()
+            } catch {
+                print(error.localizedDescription)
+            }
         }
     }
    
@@ -67,7 +128,7 @@ class CoreDataManager {
         }
     }
     
-    private func configureFetchedResultsController() {
+     func configureFetchedResultsController() {
         let fetchRequest = NSFetchRequest<CDFollower>(entityName: CDFollower.entityName)
         let sort = NSSortDescriptor(key: "login", ascending: true)
         fetchRequest.sortDescriptors = [sort]
@@ -83,5 +144,56 @@ class CoreDataManager {
         } catch {
             print(error.localizedDescription)
         }
+    }
+    func test(predicate: String) {
+        let fetchRequest = NSFetchRequest<CDUser>(entityName: CDUser.entityName)
+        let sort = NSSortDescriptor(key: "login", ascending: true)
+        fetchRequest.sortDescriptors = [sort]
+        
+        fetchRequest.predicate = NSPredicate(format: "login == %@", predicate)
+        
+        userFetchRequestController = NSFetchedResultsController<CDUser>(
+            fetchRequest: fetchRequest,
+            managedObjectContext: CoreDataManager.shared.viewContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        do {
+            try userFetchRequestController.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+     func configureUserFetchedResultsController() {
+        let fetchRequest = NSFetchRequest<CDUser>(entityName: CDUser.entityName)
+        let sort = NSSortDescriptor(key: "login", ascending: true)
+        fetchRequest.sortDescriptors = [sort]
+        
+        userFetchRequestController = NSFetchedResultsController<CDUser>(
+            fetchRequest: fetchRequest,
+            managedObjectContext: CoreDataManager.shared.viewContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        do {
+            try userFetchRequestController.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func checkForRedudantUser(username: String) -> Bool {
+        configureUserFetchedResultsController()
+        guard let savedUsers = userFetchRequestController.fetchedObjects else { fatalError("") }
+
+        let check = savedUsers.contains { savedUser in
+            if savedUser.login == username {
+                return true
+            } else {
+                return false
+            }
+        }
+        return check
     }
 }

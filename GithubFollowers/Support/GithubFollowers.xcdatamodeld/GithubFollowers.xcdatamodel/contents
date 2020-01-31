@@ -4,7 +4,21 @@
         <attribute name="avatarUrl" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="login" optional="YES" attributeType="String" defaultValueString=""/>
     </entity>
+    <entity name="CDUser" representedClassName=".CDUser" syncable="YES">
+        <attribute name="avatarUrl" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="bio" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="createdAt" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="followers" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="following" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="htmlUrl" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="location" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="login" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="name" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="publicGists" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="publicRepos" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <elements>
         <element name="CDFollower" positionX="-54" positionY="-9" width="128" height="73"/>
+        <element name="CDUser" positionX="-36" positionY="27" width="128" height="208"/>
     </elements>
 </model>

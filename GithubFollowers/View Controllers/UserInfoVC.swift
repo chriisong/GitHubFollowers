@@ -6,11 +6,12 @@
 //  Copyright © 2020 Chris Song. All rights reserved.
 //
 
+import CoreData
 import UIKit
 
 protocol UserInfoDelegate: class {
-    func didTapGitHubProfile(for user: User)
-    func didTapGetFollowers(for user: User)
+        func didTapGitHubProfile(for user: CDUser)
+        func didTapGetFollowers(for user: CDUser)
 }
 
 class UserInfoVC: UIViewController {
@@ -24,9 +25,15 @@ class UserInfoVC: UIViewController {
     weak var delegate: FollowerListDelegate!
     
     var follower: Follower!
+    var favourite: CDFollower!
+    
+    var isFavourite = false
+    var isAlreadySaved = false
+    
+    var _user: CDUser!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         layoutUI()
         configureNavigationBar()
         getUserInfo()
@@ -34,33 +41,44 @@ class UserInfoVC: UIViewController {
     
     private func configureNavigationBar() {
         view.backgroundColor = .systemBackground
+        navigationItem.largeTitleDisplayMode = .never
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
-        navigationItem.rightBarButtonItem = doneButton
-        navigationItem.title = follower.login
         
-
+        navigationItem.rightBarButtonItems = [doneButton]
     }
     
+    
     private func getUserInfo() {
-        NetworkManager.shared.getUserInfo(for: follower.login) { [weak self] result in
+        NetworkManager.shared.getUserInfo(for: isFavourite ? favourite.login : follower.login) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let user):
-                DispatchQueue.main.async { self.configureUIElements(with: user) }
+                DispatchQueue.main.async {
+                    if CoreDataManager.shared.checkForRedudantUser(username: user.login) == false {
+                        CoreDataManager.shared.saveToUserAndRetreive(user: user) { [weak self] cdUser in
+                            guard let self = self else { return }
+                            self._user = cdUser
+                            self.configureUIElements(user: user)
+                        }
+                    } else {
+                        self._user = CoreDataManager.shared.retrieveUserData(username: user.login)
+                        self.configureUIElements(user: user)
+                        return
+                    }
+                }
             case .failure(let error):
                 self.presentGFAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTitle: "OK")
             }
         }
     }
-    
-    func configureUIElements(with user: User) {
-        let repoItemVC = GFRepoItemVC(user: user)
+    func configureUIElements(user: User) {
+        let repoItemVC = GFRepoItemVC(coreData: _user, userDefaults: user)
         repoItemVC.delegate = self
         
-        let followerItemVC = GFFollowerItemVC(user: user)
+        let followerItemVC = GFFollowerItemVC(coreData: _user, userDefaults: user)
         followerItemVC.delegate = self
         
-        self.add(childVC: GFUserInfoHeaderVC(user: user), to: self.headerView)
+        self.add(childVC: GFUserInfoHeaderVC(coreData: _user, userDefaults: user), to: self.headerView)
         self.add(childVC: repoItemVC, to: self.itemViewOne)
         self.add(childVC: followerItemVC, to: self.itemViewTwo)
         self.dateLabel.text = "GitHub since " + user.createdAt.convertToDisplayFormat()
@@ -105,9 +123,8 @@ class UserInfoVC: UIViewController {
         dismiss(animated: true)
     }
 }
-
 extension UserInfoVC: UserInfoDelegate {
-    func didTapGitHubProfile(for user: User) {
+    func didTapGitHubProfile(for user: CDUser) {
         guard let url = URL(string: user.htmlUrl) else {
             presentGFAlertOnMainThread(title: "Invalid URL", message: "The URL attached to this user is invalid", buttonTitle: "OK")
             return
@@ -115,12 +132,22 @@ extension UserInfoVC: UserInfoDelegate {
         presentSafariVC(with: url)
     }
     
-    func didTapGetFollowers(for user: User) {
+    func didTapGetFollowers(for user: CDUser) {
         guard user.followers != 0 else {
             presentGFAlertOnMainThread(title: "No followers", message: "This user has no followers.", buttonTitle: "Aww")
             return
         }
-        delegate.didRequestFollowers(for: user.login)
-        dismissVC()
+        
+        if isFavourite {
+            let vc = FollowerListVC()
+            vc._user = self._user
+            vc.title = self._user.login
+            vc.username = self._user.login
+            vc.page = 1
+            navigationController?.pushViewController(vc, animated: true)
+        } else {
+            delegate.didRequestFollowers(for: user.login)
+            dismissVC()
+        }
     }
 }

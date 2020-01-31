@@ -29,7 +29,10 @@ class FavouritesListVC: UIViewController {
     private var dataSource: DataSource!
     private var snapshot: NSDiffableDataSourceSnapshot<SectionType, ItemType>!
 
-    
+    // MARK: Search Controller
+//    private var searchController: GFSearchController!
+    private var isSearching = false
+    private var currentSearchText: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,10 +41,17 @@ class FavouritesListVC: UIViewController {
         configureViewController()
         configureTableView()
         configureDataSource()
+        configureSearchController()
     }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setupSnapshot()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
     private func configureViewController() {
@@ -51,6 +61,7 @@ class FavouritesListVC: UIViewController {
         
         let deleteAllButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteAllButtonTapped))
         navigationItem.rightBarButtonItem = deleteAllButton
+        
     }
     
     private func configureTableView() {
@@ -85,7 +96,18 @@ class FavouritesListVC: UIViewController {
         snapshot = NSDiffableDataSourceSnapshot<SectionType, ItemType>()
         snapshot.appendSections([.main])
         snapshot.appendItems(favourites)
-        dataSource.apply(snapshot, animatingDifferences: true)
+        
+        if favourites.isEmpty {
+            if self.isSearching == false {
+                DispatchQueue.main.async { self.showEmptyStateView(with: "You have not favourited any users yet!", in: self.view, tag: 99) }
+                self.tableView.alpha = 0
+            }
+        } else {
+            DispatchQueue.main.async { self.removeEmptyStateView(in: self.view, tag: 99) }
+            self.tableView.alpha = 1
+        }
+        
+        DispatchQueue.main.async { self.dataSource.apply(self.snapshot, animatingDifferences: true) }
     }
     
     private func getFavourites() {
@@ -105,6 +127,13 @@ class FavouritesListVC: UIViewController {
 extension FavouritesListVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let item = followerFetchRequestController.object(at: indexPath)
+        let userInfoVC = UserInfoVC()
+        userInfoVC.favourite = item
+        userInfoVC.isFavourite = true
+        let nc = UINavigationController(rootViewController: userInfoVC)
+        present(nc, animated: true)
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -171,11 +200,19 @@ extension FavouritesListVC: UITableViewDelegate {
     }
 }
 
-extension FavouritesListVC {
+extension FavouritesListVC: NSFetchedResultsControllerDelegate {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        setupSnapshot()
+    }
+    
     private func configureFetchedResultsController() {
         let fetchRequest = NSFetchRequest<CDFollower>(entityName: CDFollower.entityName)
         let sort = NSSortDescriptor(key: "login", ascending: true)
         fetchRequest.sortDescriptors = [sort]
+        
+        if currentSearchText != "" {
+            fetchRequest.predicate = NSPredicate(format: "login CONTAINS[c] %@", currentSearchText)
+        }
         
         followerFetchRequestController = NSFetchedResultsController<CDFollower>(
             fetchRequest: fetchRequest,
@@ -188,9 +225,49 @@ extension FavouritesListVC {
         } catch {
             print(error.localizedDescription)
         }
+        followerFetchRequestController.delegate = self
     }
     
     @objc func deleteAllButtonTapped() {
-        
+        self.presentGFAlertActionVC(title: "Delete All Favourites?", message: "Do you wish to delete all your favourited users? This action cannot be reversed.", buttonTitle: "Delete All", buttonAction: deleteAllFavourites)
+    }
+    
+    func deleteAllFavourites() {
+        do {
+            let results = try CoreDataManager.shared.viewContext.fetch(CDFollower.fetchRequest())
+            for object in results {
+                guard let objectData = object as? NSManagedObject else { continue }
+                CoreDataManager.shared.viewContext.delete(objectData)
+            }
+            try CoreDataManager.shared.viewContext.save()
+            setupSnapshot()
+        } catch {
+            self.presentGFAlertOnMainThread(title: "Something went wrong", message: "And error occured while deleting. Error: \(error.localizedDescription)", buttonTitle: "Oh no")
+        }
+    }
+}
+
+extension FavouritesListVC: UISearchResultsUpdating, UISearchBarDelegate {
+    private func configureSearchController() {
+        let searchController = GFSearchController(placeHolder: "Search for a username", textFieldBackgroundColor: UIColor.white.withAlphaComponent(0.1))
+        searchController.searchResultsUpdater = self
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchBar.delegate = self
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text else { return }
+        isSearching = true
+        currentSearchText = text
+        configureFetchedResultsController()
+        setupSnapshot()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        isSearching = false
+        currentSearchText = ""
+        configureFetchedResultsController()
+        setupSnapshot()
     }
 }

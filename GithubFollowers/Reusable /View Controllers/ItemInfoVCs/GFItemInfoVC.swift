@@ -16,6 +16,7 @@ class GFItemInfoVC: UIViewController {
     let actionButton = GFButton()
     
     var user: User!
+    var _user: CDUser!
     weak var delegate: UserInfoDelegate!
     
     override func viewDidLoad() {
@@ -26,8 +27,9 @@ class GFItemInfoVC: UIViewController {
         configureActionButton()
     }
     
-    init(user: User) {
+    init(coreData _user: CDUser, userDefaults user: User) {
         super.init(nibName: nil, bundle: nil)
+        self._user = _user
         self.user = user
     }
     

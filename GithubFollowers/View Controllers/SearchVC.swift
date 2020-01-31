@@ -16,7 +16,6 @@ class SearchVC: UIViewController {
     private var isUsernameEntered: Bool { return !usernameTextField.text!.isEmpty}
     
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -79,10 +78,29 @@ class SearchVC: UIViewController {
             return
         }
         let followerListVC = FollowerListVC()
-        followerListVC.username = usernameTextField.text
-        followerListVC.title = usernameTextField.text
+        guard let username = usernameTextField.text else { return }
+
+        NetworkManager.shared.getUserInfo(for: username) { result in
+            switch result {
+            case .success(let user):
+                DispatchQueue.main.async {
+                    if CoreDataManager.shared.checkForRedudantUser(username: user.login) == false {
+//                        CoreDataManager.shared.saveToUser(user: user)
+                        CoreDataManager.shared.saveToUser(user: user)
+                    } else {
+                        return
+                    }
+                }
+            case .failure(let error):
+                self.presentGFAlertOnMainThread(title: "Something bad happened while saving user information", message: error.rawValue, buttonTitle: "Hmm OK")
+            }
+        }
+        followerListVC.username = username
+        followerListVC.title = username
         navigationController?.pushViewController(followerListVC, animated: true)
     }
+    
+
 }
 
 extension SearchVC: UITextFieldDelegate {

@@ -17,7 +17,7 @@ extension CDFollower {
         return NSFetchRequest<CDFollower>(entityName: "CDFollower")
     }
 
-    @NSManaged public var login: String?
+    @NSManaged public var login: String
     @NSManaged public var avatarUrl: String?
 
 }

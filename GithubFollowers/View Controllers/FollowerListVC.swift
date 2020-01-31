@@ -28,6 +28,7 @@ class FollowerListVC: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<SectionType, Follower>!
     private var snapshot: NSDiffableDataSourceSnapshot<SectionType, Follower>!
     
+    var _user: CDUser!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,8 +37,8 @@ class FollowerListVC: UIViewController {
         getFollowers(username: username, page: page)
         configureDataSource()
         configureSearchController()
-        
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
@@ -70,9 +71,19 @@ class FollowerListVC: UIViewController {
     private func configureViewController() {
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
         
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
-        navigationItem.rightBarButtonItem = addButton
+        
+        navigationItem.rightBarButtonItems = [addButton]
+    }
+    
+    @objc func debug() {
+        CoreDataManager.shared.configureUserFetchedResultsController()
+        guard let savedUsers = CoreDataManager.shared.userFetchRequestController.fetchedObjects else { return }
+        for user in savedUsers {
+            print("User: " + user.login)
+        }
     }
     
     private func getFollowers(username: String, page: Int) {
@@ -89,7 +100,7 @@ class FollowerListVC: UIViewController {
                 
                 if self.followers.isEmpty {
                     let message = "This user doesn't have any followers. Go follow them ☺️"
-                    DispatchQueue.main.async { self.showEmptyStateView(with: message, in: self.view) }
+                    DispatchQueue.main.async { self.showEmptyStateView(with: message, in: self.view, tag: 1) }
                     
                     return
                 }
@@ -99,10 +110,8 @@ class FollowerListVC: UIViewController {
     }
     
     private func configureSearchController() {
-        let searchController = UISearchController()
+        let searchController = GFSearchController(placeHolder: "Search for a username", textFieldBackgroundColor: UIColor.white.withAlphaComponent(0.1))
         searchController.searchResultsUpdater = self
-        searchController.searchBar.placeholder = "Search for a username"
-        searchController.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController = searchController
         searchController.searchBar.delegate = self
     }
@@ -116,6 +125,7 @@ class FollowerListVC: UIViewController {
             switch result {
             case .success(let user):
                 let favourite = Follower(login: user.login, avatarUrl: user.avatarUrl)
+                
                 DispatchQueue.main.async {
                     CoreDataManager().updateWith(favourite: favourite, actionType: .add) { [weak self] error in
                         guard let self = self else { return }
@@ -147,6 +157,7 @@ extension FollowerListVC: UICollectionViewDelegate {
             }
             page += 1
             getFollowers(username: username, page: page)
+            
         }
     }
     
@@ -156,6 +167,7 @@ extension FollowerListVC: UICollectionViewDelegate {
         
         let vc = UserInfoVC()
         vc.follower = follower
+        vc._user = self._user
         vc.delegate = self
         let nc = UINavigationController(rootViewController: vc)
         present(nc, animated: true)
@@ -168,7 +180,6 @@ extension FollowerListVC: UISearchResultsUpdating, UISearchBarDelegate {
         isSearching = true
         filteredFollowers = followers.filter { $0.login.lowercased().contains(filter.lowercased()) }
         setupSnapshot(filter: filteredFollowers)
-        
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
