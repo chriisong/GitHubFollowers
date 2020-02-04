@@ -7,7 +7,7 @@
     <entity name="CDUser" representedClassName=".CDUser" syncable="YES">
         <attribute name="avatarUrl" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="bio" optional="YES" attributeType="String" defaultValueString=""/>
-        <attribute name="createdAt" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" defaultDateTimeInterval="602480700" usesScalarValueType="NO"/>
         <attribute name="followers" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="following" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="htmlUrl" optional="YES" attributeType="String" defaultValueString=""/>

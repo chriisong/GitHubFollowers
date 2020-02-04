@@ -9,7 +9,7 @@
 import CoreData
 import UIKit
 
-class FavouritesListVC: UIViewController {
+class FavouritesListVC: GFDataLoadingVC {
     enum Section {
         case main
         enum Row {
@@ -128,9 +128,7 @@ extension FavouritesListVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let item = followerFetchRequestController.object(at: indexPath)
-        let userInfoVC = UserInfoVC()
-        userInfoVC.favourite = item
-        userInfoVC.isFavourite = true
+        let userInfoVC = UserInfoVC(favourite: item, isFavourite: true)
         let nc = UINavigationController(rootViewController: userInfoVC)
         present(nc, animated: true)
         

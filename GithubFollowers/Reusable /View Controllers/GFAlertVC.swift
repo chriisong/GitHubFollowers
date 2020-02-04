@@ -11,7 +11,7 @@ import UIKit
 class GFAlertVC: UIViewController {
     
     // TODO: Make Reusable Alert Container View
-    let containerView = UIView()
+    let containerView = GFAlertContainerView()
     let titleLabel = GFTitleLabel(textAlignment: .center, fontSize: 20)
     let messageLabel = GFBodyLabel(textAlignment: .center)
     
@@ -48,8 +48,8 @@ class GFAlertVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // TODO: Reusable color constant for this opaque background color
-        view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.75)
+        
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.75)
         
         configureContainerView()
         configureTitleLabel()
@@ -59,12 +59,7 @@ class GFAlertVC: UIViewController {
     
     private func configureContainerView() {
         view.addSubview(containerView)
-        containerView.backgroundColor = .systemBackground
-        containerView.layer.cornerRadius = 16
-        containerView.layer.borderWidth = 2
-        containerView.layer.borderColor = UIColor.white.cgColor
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),

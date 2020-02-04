@@ -12,7 +12,7 @@ protocol FollowerListDelegate: class {
     func didRequestFollowers(for username: String)
 }
 
-class FollowerListVC: UIViewController {
+class FollowerListVC: GFDataLoadingVC {
     enum Section { case main }
     
     typealias SectionType = Section
@@ -29,6 +29,22 @@ class FollowerListVC: UIViewController {
     private var snapshot: NSDiffableDataSourceSnapshot<SectionType, Follower>!
     
     var _user: CDUser!
+    
+    init(username: String) {
+        super.init(nibName: nil, bundle: nil)
+        self.username = username
+        title = username
+    }
+    
+    init(cdUser: CDUser, page: Int) {
+        super.init(nibName: nil, bundle: nil)
+        self._user = cdUser
+        self.username = cdUser.login
+        self.page = page
+        title = cdUser.login
+    }
+    
+    required init?(coder: NSCoder) { fatalError("") }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -164,10 +180,7 @@ extension FollowerListVC: UICollectionViewDelegate {
         let activeArray = isSearching ? filteredFollowers : followers
         let follower = activeArray[indexPath.item]
         
-        let vc = UserInfoVC()
-        vc.follower = follower
-        vc._user = self._user
-        vc.delegate = self
+        let vc = UserInfoVC(cdUser: self._user, follower: follower, delegate: self)
         let nc = UINavigationController(rootViewController: vc)
         present(nc, animated: true)
     }

@@ -14,7 +14,7 @@ protocol UserInfoDelegate: class {
         func didTapGetFollowers(for user: CDUser)
 }
 
-class UserInfoVC: UIViewController {
+class UserInfoVC: GFDataLoadingVC {
     
     let headerView = UIView()
     let itemViewOne = UIView()
@@ -33,12 +33,35 @@ class UserInfoVC: UIViewController {
     
     var _user: CDUser!
     
+    init(follower: Follower, isFromHome: Bool) {
+        super.init(nibName: nil, bundle: nil)
+        self.follower = follower
+        self.isFromHome = isFromHome
+    }
+    
+    init(favourite: CDFollower, isFavourite: Bool) {
+        super.init(nibName: nil, bundle: nil)
+        self.favourite = favourite
+        self.isFavourite = isFavourite
+    }
+    
+    init(cdUser: CDUser?, follower: Follower, delegate: FollowerListDelegate) {
+        super.init(nibName: nil, bundle: nil)
+        self._user = cdUser
+        self.follower = follower
+        self.delegate = delegate
+    }
+    
+    required init?(coder: NSCoder) { fatalError("") }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         layoutUI()
         configureNavigationBar()
         getUserInfo()
     }
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
@@ -86,7 +109,7 @@ class UserInfoVC: UIViewController {
         self.add(childVC: GFUserInfoHeaderVC(coreData: _user, userDefaults: user), to: self.headerView)
         self.add(childVC: repoItemVC, to: self.itemViewOne)
         self.add(childVC: followerItemVC, to: self.itemViewTwo)
-        self.dateLabel.text = "GitHub since " + user.createdAt.convertToDisplayFormat()
+        self.dateLabel.text = "GitHub since " + user.createdAt.convertToMonthYearFormat()
     }
     
     private func add(childVC: UIViewController, to containerView: UIView) {
@@ -170,11 +193,7 @@ extension UserInfoVC: UserInfoDelegate {
         }
         
         if isFavourite || isFromHome {
-            let vc = FollowerListVC()
-            vc._user = self._user
-            vc.title = self._user.login
-            vc.username = self._user.login
-            vc.page = 1
+            let vc = FollowerListVC(cdUser: self._user, page: 1)
             navigationController?.pushViewController(vc, animated: true)
         } else {
             delegate.didRequestFollowers(for: user.login)

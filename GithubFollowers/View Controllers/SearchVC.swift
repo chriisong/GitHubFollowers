@@ -14,6 +14,9 @@ class SearchVC: UIViewController {
     let getFollowersButton = GFButton(backgroundColor: .systemGreen, title: "Get Followers")
     let getUserInfoButton = GFButton(backgroundColor: .systemBlue, title: "Get User Info")
     
+    private var logoImageViewTopConstraint: NSLayoutConstraint!
+    private var logoImageViewHeightConstraint: NSLayoutConstraint!
+    
     private var isUsernameEntered: Bool { return !usernameTextField.text!.isEmpty}
     
     private let inset: CGFloat = 50
@@ -29,18 +32,25 @@ class SearchVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        usernameTextField.text = ""
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     private func configureLogoImageView() {
         view.addSubview(logoImageView)
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
-        logoImageView.image = UIImage(named: "gh-logo")!
+        logoImageView.image = Images.ghLogo
+        
+        let topConstraintConstant = DeviceTypes.isiPhoneSE || DeviceTypes.isiPhone8Zoomed ? CGFloat(20) : CGFloat(80)
+        let heightConstant = DeviceTypes.isiPhoneSE || DeviceTypes.isiPhone8Zoomed ? CGFloat(150) : CGFloat(200)
+        
+        logoImageViewTopConstraint = logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topConstraintConstant)
+        logoImageViewHeightConstraint = logoImageView.heightAnchor.constraint(equalToConstant: heightConstant)
         
         NSLayoutConstraint.activate([
-            logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 80),
+            logoImageViewTopConstraint,
             logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoImageView.heightAnchor.constraint(equalToConstant: 200),
+            logoImageViewHeightConstraint,
             logoImageView.widthAnchor.constraint(equalTo: logoImageView.heightAnchor, multiplier: 1)
         ])
     }
@@ -77,7 +87,7 @@ class SearchVC: UIViewController {
     }
     
     private func createDismissKeyboardTapGesture() {
-        let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
+        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
         view.addGestureRecognizer(tap)
     }
     
@@ -86,11 +96,9 @@ class SearchVC: UIViewController {
             presentGFAlertOnMainThread(title: GFError.noUserNameEntered.rawValue, message: "Please try again with a username", buttonTitle: "OK")
             return
         }
-        let userInfoVC = UserInfoVC()
         guard let username = usernameTextField.text else { return }
         let user = Follower(login: username, avatarUrl: "")
-        userInfoVC.follower = user
-        userInfoVC.isFromHome = true
+        let userInfoVC = UserInfoVC(follower: user, isFromHome: true)
         navigationController?.pushViewController(userInfoVC, animated: true)
     }
     
@@ -99,9 +107,10 @@ class SearchVC: UIViewController {
             presentGFAlertOnMainThread(title: GFError.noUserNameEntered.rawValue, message: "Please try again with a username", buttonTitle: "OK")
             return
         }
-        let followerListVC = FollowerListVC()
+        
         guard let username = usernameTextField.text else { return }
-
+        let followerListVC = FollowerListVC(username: username)
+        
         NetworkManager.shared.getUserInfo(for: username) { result in
             switch result {
             case .success(let user):
@@ -116,8 +125,7 @@ class SearchVC: UIViewController {
                 self.presentGFAlertOnMainThread(title: "Something bad happened while saving user information", message: error.rawValue, buttonTitle: "Hmm OK")
             }
         }
-        followerListVC.username = username
-        followerListVC.title = username
+
         navigationController?.pushViewController(followerListVC, animated: true)
     }
 }

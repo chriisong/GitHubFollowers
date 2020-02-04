@@ -34,6 +34,9 @@
 		4A58A69E23E3765F0090159F /* GFSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A58A69D23E3765F0090159F /* GFSearchController.swift */; };
 		4A58A6A223E3CF580090159F /* CDUser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A58A6A023E3CF580090159F /* CDUser+CoreDataClass.swift */; };
 		4A58A6A323E3CF580090159F /* CDUser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A58A6A123E3CF580090159F /* CDUser+CoreDataProperties.swift */; };
+		4A64F73823E4D11C00D11168 /* GFTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A64F73723E4D11C00D11168 /* GFTabBarController.swift */; };
+		4A64F73A23E90FCE00D11168 /* GFAlertContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A64F73923E90FCE00D11168 /* GFAlertContainerView.swift */; };
+		4A64F73C23E923B200D11168 /* GFDataLoadingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A64F73B23E923B200D11168 /* GFDataLoadingVC.swift */; };
 		4A791B1923DBC430003F8998 /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A791B1823DBC430003F8998 /* Date+Ext.swift */; };
 		4A8CB52D23CA57960074D621 /* UserInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A8CB52C23CA57960074D621 /* UserInfoVC.swift */; };
 		4AA0C4AB23C4F14100A40E9F /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA0C4AA23C4F14100A40E9F /* NetworkManager.swift */; };
@@ -81,6 +84,9 @@
 		4A58A69D23E3765F0090159F /* GFSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFSearchController.swift; sourceTree = "<group>"; };
 		4A58A6A023E3CF580090159F /* CDUser+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CDUser+CoreDataClass.swift"; sourceTree = "<group>"; };
 		4A58A6A123E3CF580090159F /* CDUser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CDUser+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		4A64F73723E4D11C00D11168 /* GFTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFTabBarController.swift; sourceTree = "<group>"; };
+		4A64F73923E90FCE00D11168 /* GFAlertContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFAlertContainerView.swift; sourceTree = "<group>"; };
+		4A64F73B23E923B200D11168 /* GFDataLoadingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFDataLoadingVC.swift; sourceTree = "<group>"; };
 		4A791B1823DBC430003F8998 /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		4A8CB52C23CA57960074D621 /* UserInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoVC.swift; sourceTree = "<group>"; };
 		4AA0C4AA23C4F14100A40E9F /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -155,6 +161,7 @@
 		4A29B4C223C3E1E2003DFBA8 /* Reusable  */ = {
 			isa = PBXGroup;
 			children = (
+				4A64F73623E4D10800D11168 /* TabBarController */,
 				4A58A69C23E3764E0090159F /* Search Controller */,
 				4AA3AB8923C7E568005E69C1 /* Labels */,
 				4AA3AB8823C7E554005E69C1 /* View Controllers */,
@@ -220,6 +227,14 @@
 			path = User;
 			sourceTree = "<group>";
 		};
+		4A64F73623E4D10800D11168 /* TabBarController */ = {
+			isa = PBXGroup;
+			children = (
+				4A64F73723E4D11C00D11168 /* GFTabBarController.swift */,
+			);
+			path = TabBarController;
+			sourceTree = "<group>";
+		};
 		4AA0C4A923C4F02D00A40E9F /* Managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -254,6 +269,7 @@
 			children = (
 				4AA3AB8A23C7E590005E69C1 /* GFEmptyStateView.swift */,
 				4A24CB0D23DA2D8D001DB248 /* GFItemInfoView.swift */,
+				4A64F73923E90FCE00D11168 /* GFAlertContainerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -288,6 +304,7 @@
 				4A55D2B423DBC21600A91A3C /* ItemInfoVCs */,
 				4AE0277E23C3F5A9004712CB /* GFAlertVC.swift */,
 				4A24CB0723D94752001DB248 /* GFUserInfoHeaderVC.swift */,
+				4A64F73B23E923B200D11168 /* GFDataLoadingVC.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -413,6 +430,7 @@
 				4AA0C4B323C510C500A40E9F /* GFAvatarImageView.swift in Sources */,
 				4AA0C4B523C520B400A40E9F /* UIHelper.swift in Sources */,
 				4A060F9223C4227B00DC0B70 /* Follower.swift in Sources */,
+				4A64F73A23E90FCE00D11168 /* GFAlertContainerView.swift in Sources */,
 				4AE0278123C41A5F004712CB /* UIViewController+Ext.swift in Sources */,
 				4A29B4BB23C3D894003DFBA8 /* SearchVC.swift in Sources */,
 				4A24CB0E23DA2D8D001DB248 /* GFItemInfoView.swift in Sources */,
@@ -437,7 +455,9 @@
 				4AE0277D23C3F4F5004712CB /* GFBodyLabel.swift in Sources */,
 				4A29B4A623C3C9A8003DFBA8 /* SceneDelegate.swift in Sources */,
 				4A55D2B323DBC1CD00A91A3C /* GFFollowerItemVC.swift in Sources */,
+				4A64F73823E4D11C00D11168 /* GFTabBarController.swift in Sources */,
 				4A58A6A223E3CF580090159F /* CDUser+CoreDataClass.swift in Sources */,
+				4A64F73C23E923B200D11168 /* GFDataLoadingVC.swift in Sources */,
 				4AE0277523C3E905004712CB /* FollowerListVC.swift in Sources */,
 				4AE0277B23C3EE99004712CB /* GFTitleLabel.swift in Sources */,
 				4A29B4C123C3DFF2003DFBA8 /* GFTextField.swift in Sources */,
@@ -579,7 +599,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GithubFollowers/GithubFollowers.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = FZ38NK37NP;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -588,6 +610,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.chrissong.GithubFollowers;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -598,7 +621,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GithubFollowers/GithubFollowers.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = FZ38NK37NP;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -607,6 +632,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.chrissong.GithubFollowers;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
