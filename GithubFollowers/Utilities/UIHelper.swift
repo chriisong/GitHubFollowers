@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct UIHelper {
+enum UIHelper {
     static func createCompLayout(numberOfColumns: Int) -> UICollectionViewLayout {
         let inset = CGFloat(12)
         

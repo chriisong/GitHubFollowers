@@ -30,7 +30,6 @@ class FavouritesListVC: GFDataLoadingVC {
     private var snapshot: NSDiffableDataSourceSnapshot<SectionType, ItemType>!
 
     // MARK: Search Controller
-//    private var searchController: GFSearchController!
     private var isSearching = false
     private var currentSearchText: String = ""
     
@@ -67,6 +66,7 @@ class FavouritesListVC: GFDataLoadingVC {
     private func configureTableView() {
         tableView = UITableView(frame: view.bounds, style: .plain)
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.removeExcessCells()
         view.addSubview(tableView)
         
         let inset = CGFloat(12)

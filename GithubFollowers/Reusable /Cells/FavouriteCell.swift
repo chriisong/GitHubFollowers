@@ -22,8 +22,7 @@ class FavouriteCell: UITableViewCell {
     required init?(coder: NSCoder) { fatalError("") }
     
     private func configure () {
-        addSubview(avatarImageView)
-        addSubview(usernameLabel)
+        addSubviews(avatarImageView, usernameLabel)
         accessoryType = .disclosureIndicator
         let inset = CGFloat(12)
         

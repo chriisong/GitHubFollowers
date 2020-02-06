@@ -9,9 +9,8 @@
 import CoreData
 import UIKit
 
-protocol UserInfoDelegate: class {
-        func didTapGitHubProfile(for user: CDUser)
-        func didTapGetFollowers(for user: CDUser)
+protocol UserInfoVCDelegate: class {
+    func didRequestFollowers(for username: String)
 }
 
 class UserInfoVC: GFDataLoadingVC {
@@ -22,7 +21,7 @@ class UserInfoVC: GFDataLoadingVC {
     let dateLabel = GFBodyLabel(textAlignment: .center)
     var itemViews: [UIView] = []
     
-    weak var delegate: FollowerListDelegate!
+    weak var delegate: UserInfoVCDelegate!
     
     var follower: Follower!
     var favourite: CDFollower!
@@ -45,7 +44,7 @@ class UserInfoVC: GFDataLoadingVC {
         self.isFavourite = isFavourite
     }
     
-    init(cdUser: CDUser?, follower: Follower, delegate: FollowerListDelegate) {
+    init(cdUser: CDUser?, follower: Follower, delegate: UserInfoVCDelegate) {
         super.init(nibName: nil, bundle: nil)
         self._user = cdUser
         self.follower = follower
@@ -71,7 +70,7 @@ class UserInfoVC: GFDataLoadingVC {
         view.backgroundColor = .systemBackground
         navigationItem.largeTitleDisplayMode = .never
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
-        let addButton = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(addButtonTapped))
+        let addButton = UIBarButtonItem(image: Images.favouriteImage, style: .plain, target: self, action: #selector(addButtonTapped))
         navigationItem.leftBarButtonItems = isFromHome ? [] : [doneButton]
         navigationItem.rightBarButtonItem = addButton
     }
@@ -134,7 +133,7 @@ class UserInfoVC: GFDataLoadingVC {
         
         NSLayoutConstraint.activate([
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerView.heightAnchor.constraint(equalToConstant: 180),
+            headerView.heightAnchor.constraint(equalToConstant: 210),
             
             itemViewOne.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: inset),
             itemViewOne.heightAnchor.constraint(equalToConstant: itemHeight),
@@ -177,7 +176,7 @@ class UserInfoVC: GFDataLoadingVC {
         }
     }
 }
-extension UserInfoVC: UserInfoDelegate {
+extension UserInfoVC: ItemInfoVCDelegate {
     func didTapGitHubProfile(for user: CDUser) {
         guard let url = URL(string: user.htmlUrl) else {
             presentGFAlertOnMainThread(title: "Invalid URL", message: "The URL attached to this user is invalid", buttonTitle: "OK")
