@@ -2,7 +2,7 @@
 //  CDUser+CoreDataProperties.swift
 //  GithubFollowers
 //
-//  Created by Chris Song on 2020-02-03.
+//  Created by Chris Song on 2020-02-12.
 //  Copyright © 2020 Chris Song. All rights reserved.
 //
 //

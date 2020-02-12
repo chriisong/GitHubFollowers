@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19C57" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="CDFollower" representedClassName=".CDFollower" syncable="YES">
         <attribute name="avatarUrl" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="login" optional="YES" attributeType="String" defaultValueString=""/>
@@ -7,7 +7,7 @@
     <entity name="CDUser" representedClassName=".CDUser" syncable="YES">
         <attribute name="avatarUrl" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="bio" optional="YES" attributeType="String" defaultValueString=""/>
-        <attribute name="createdAt" optional="YES" attributeType="Date" defaultDateTimeInterval="602480700" usesScalarValueType="NO"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" defaultDateTimeInterval="0" usesScalarValueType="NO"/>
         <attribute name="followers" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="following" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="htmlUrl" optional="YES" attributeType="String" defaultValueString=""/>

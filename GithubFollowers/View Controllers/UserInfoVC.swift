@@ -15,6 +15,9 @@ protocol UserInfoVCDelegate: class {
 
 class UserInfoVC: GFDataLoadingVC {
     
+    let scrollView = UIScrollView()
+    let contentView = UIView()
+    
     let headerView = UIView()
     let itemViewOne = UIView()
     let itemViewTwo = UIView()
@@ -57,6 +60,7 @@ class UserInfoVC: GFDataLoadingVC {
         super.viewDidLoad()
         layoutUI()
         configureNavigationBar()
+        configureScrollView()
         getUserInfo()
     }
     
@@ -73,6 +77,19 @@ class UserInfoVC: GFDataLoadingVC {
         let addButton = UIBarButtonItem(image: Images.favouriteImage, style: .plain, target: self, action: #selector(addButtonTapped))
         navigationItem.leftBarButtonItems = isFromHome ? [] : [doneButton]
         navigationItem.rightBarButtonItem = addButton
+    }
+    
+    private func configureScrollView() {
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        scrollView.pinToEdges(of: view)
+        contentView.pinToEdges(of: scrollView)
+        
+        NSLayoutConstraint.activate([
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            contentView.heightAnchor.constraint(equalToConstant: 600),
+        ])
+        
     }
     
     private func getUserInfo() {
@@ -123,16 +140,16 @@ class UserInfoVC: GFDataLoadingVC {
         
         itemViews = [headerView, itemViewOne, itemViewTwo, dateLabel]
         itemViews.forEach { itemView in
-            view.addSubview(itemView)
+            contentView.addSubview(itemView)
             itemView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                itemView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: inset),
-                itemView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -inset)
+                itemView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: inset),
+                itemView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -inset)
             ])
         }
         
         NSLayoutConstraint.activate([
-            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            headerView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
             headerView.heightAnchor.constraint(equalToConstant: 210),
             
             itemViewOne.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: inset),
