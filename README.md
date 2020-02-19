@@ -1,6 +1,7 @@
 # GitHubFollowers
 
-This project is to showcase some of my core Swift skills.
+This was part of @SAllen0400's take-home project course. After completing the course, I have added few more features, such as Core Data and CloudKit implementation, to further polish the app and showcare some of my core Swift skills.
+
 * Result Type
     * new to Swift 5, this Result Type allows for clean handling of success and failure cases
 * Custom Views
@@ -17,7 +18,20 @@ This project is to showcase some of my core Swift skills.
     * This app handles persistence using Core Data and CloudKit using the latest NSPersistenceCloudKitContainer, which allows multiple-devices to stay in sync under the same iCloud account.
     
 
-Screen Recordings:
+# Screen Recordings
 
+## Core Data and CloudKit sync across devices of same iCloud account
+![Alt Text](https://media.giphy.com/media/gKO2vbpLlJVzPRIQmQ/giphy.gif)
 
-![Alt Text](https://media.giphy.com/media/fYHGDmFEd0QsorkqRk/giphy.gif)
+## Core Data and UITableViewDiffableDataSource
+![Alt Text](https://media.giphy.com/media/H82jkCq5l5YcdH9XC5/giphy.gif)
+
+## SafariServices
+![Alt Text](https://media.giphy.com/media/MEk5d1akwmKVZpAnZR/giphy.gif)
+
+## Deleting UITableView Row with Snapshot and updating Core Data
+![Alt Text](https://media.giphy.com/media/S8MjUXWFP3DIifXDPB/giphy.gif)
+
+## Deleting all UITableView Rows with Snapshot and updating Core Data
+![Alt Text](https://media.giphy.com/media/Ka1e3EblOPWFfRJpOO/giphy.gif)
+
