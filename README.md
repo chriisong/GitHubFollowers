@@ -1,3 +1,7 @@
+![iOS](https://img.shields.io/badge/iOS-13%20-blue)
+![Swift](https://img.shields.io/badge/Swift-5-orange?logo=Swift&logoColor=white)
+<a href="https://twitter.com/intent/follow?screen_name=ChrisSong"><img src="https://img.shields.io/badge/@chriisong-x?color=08a0e9&logo=twitter&logoColor=white" /></a>
+
 # GitHubFollowers
 
 This was part of @SAllen0400's take-home project course. After completing the course, I have added few more features, such as Core Data and CloudKit implementation, to further polish the app and showcare some of my core Swift skills.
